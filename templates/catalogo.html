@@ -1,0 +1,70 @@
+ <!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo de Livros</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flash-messages">
+                {% for message in messages %}
+                    <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+
+    <h1>Catálogo de Livros</h1>
+
+    <a href="/adicionar_livro">Adicionar Novo Livro</a>
+
+    <h2>Gêneros</h2>
+    <ul>
+        {% for genero in generos %}
+            <li><a href="/catalogo/{{ genero }}">{{ genero }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <h2>Livros</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Título</th>
+                <th>Autor</th>
+                <th>Ano</th>
+                <th>Gênero</th>
+                <th>Emprestado</th>
+                <th>Devolver Até</th>
+                <th>Multa</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for livro in livros %}
+                <tr>
+                    <td>{{ livro['titulo'] }}</td>
+                    <td>{{ livro['autor'] }}</td>
+                    <td>{{ livro['ano'] }}</td>
+                    <td>{{ livro['genero'] }}</td>
+                    <td>{{ 'Sim' if livro['emprestado'] else 'Não' }}</td>
+                    <td>{{ livro['devolver'] }}</td>
+                    <td>{{ livro['multa'] if livro['multa'] > 0 else 'Nenhuma' }}</td>
+                    <td>
+                        {% if livro['emprestado'] %}
+                            <a href="/devolver/{{ livro['codigo'] }}">Devolver</a>
+                        {% else %}
+                            <a href="/emprestar/{{ livro['codigo'] }}">Emprestar</a>
+                        {% endif %}
+                        <a href="/editar_livro/{{ livro['codigo'] }}">Editar</a>
+                        <a href="/apagar_livro/{{ livro['codigo'] }}">Excluir</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>
